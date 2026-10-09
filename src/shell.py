@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 
+from .eventlog import EventLog
 from .parser import parse_command
 
 MAX_CD_ARGUMENTS = 1
@@ -19,9 +20,10 @@ class Result:
 class Shell:
     """Обрабатывать одну строку команды за вызов."""
 
-    def __init__(self, name="MyVFS"):
+    def __init__(self, name="MyVFS", logger=None):
         """Задать имя VFS для приглашения."""
         self.name = name
+        self.logger = logger or EventLog()
         self.cwd = "/"
 
     @property
@@ -35,9 +37,11 @@ class Shell:
             words = parse_command(line)
             if not words:
                 return Result()
-            return self.dispatch(words[0], words[1:])
+            result = self.dispatch(words[0], words[1:])
         except ValueError as error:
-            return Result(str(error), error=True)
+            result = Result(str(error), error=True)
+        self.logger.record(line, result)
+        return result
 
     def dispatch(self, command, arguments):
         """Обработать exit и команды-заглушки этапа 1."""
