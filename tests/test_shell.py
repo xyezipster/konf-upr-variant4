@@ -20,6 +20,6 @@ class ShellTests(unittest.TestCase):
             with self.subTest(line=line):
                 self.assertTrue(Shell().execute(line).error)
 
-    def test_stubs(self):
-        self.assertEqual(Shell().execute("ls /a").output, "ls /a")
-        self.assertEqual(Shell().execute("cd /a").output, "cd /a")
+    def test_default_commands(self):
+        self.assertEqual(Shell().execute("ls").output, "")
+        self.assertFalse(Shell().execute("cd /").error)

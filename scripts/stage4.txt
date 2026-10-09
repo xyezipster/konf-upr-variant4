@@ -1,0 +1,28 @@
+# Основные команды, их режимы и ошибки.
+ls
+ls -a
+ls -l
+ls -al /docs /home
+ls /hello.txt
+ls -- /docs
+cd /home/student/docs
+ls .
+cd ..
+cd
+whoami
+cal
+cal 2026
+cal 2 2024
+du
+du -s /
+du /hello.txt
+du -s /docs /home
+ls /missing
+ls -z
+cd /hello.txt
+cd a b
+whoami extra
+cal 13 2026
+cal text
+du -x
+exit

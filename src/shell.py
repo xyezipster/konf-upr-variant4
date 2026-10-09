@@ -2,11 +2,10 @@
 
 from dataclasses import dataclass
 
+from .commands import COMMANDS
 from .eventlog import EventLog
 from .parser import parse_command
 from .vfs import VFS
-
-MAX_CD_ARGUMENTS = 1
 
 
 @dataclass
@@ -46,13 +45,12 @@ class Shell:
         return result
 
     def dispatch(self, command, arguments):
-        """Обработать exit и команды-заглушки этапа 1."""
+        """Вызвать команду VFS или обработать завершение."""
         if command == "exit":
             if arguments:
                 raise ValueError("exit: аргументы не поддерживаются")
             return Result(stop=True)
-        if command == "cd" and len(arguments) > MAX_CD_ARGUMENTS:
-            raise ValueError("cd: ожидается не более одного пути")
-        if command in {"ls", "cd"}:
-            return Result(" ".join([command, *arguments]))
-        raise ValueError(f"Неизвестная команда: {command}")
+        handler = COMMANDS.get(command)
+        if handler is None:
+            raise ValueError(f"Неизвестная команда: {command}")
+        return Result(handler(self, arguments))
