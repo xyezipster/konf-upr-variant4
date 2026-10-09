@@ -1,0 +1,31 @@
+{
+  "entries": [
+    {
+      "path": "/",
+      "type": "dir",
+      "mode": "755"
+    },
+    {
+      "path": "/home",
+      "type": "dir",
+      "mode": "755"
+    },
+    {
+      "path": "/home/student",
+      "type": "dir",
+      "mode": "755"
+    },
+    {
+      "path": "/home/student/docs",
+      "type": "dir",
+      "mode": "755"
+    },
+    {
+      "path": "/home/student/docs/note.txt",
+      "type": "file",
+      "mode": "644",
+      "encoding": "base64",
+      "data": "Q29uZmlndXJhdGlvbiBtYW5hZ2VtZW50Cg=="
+    }
+  ]
+}

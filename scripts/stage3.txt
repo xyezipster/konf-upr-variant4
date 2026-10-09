@@ -1,0 +1,8 @@
+# Проверка парсера и команд, доступных к этапу 3.
+ls
+ls "$HOME"
+cd /home/student/docs
+cd a b
+unknown
+ls "ошибка
+exit

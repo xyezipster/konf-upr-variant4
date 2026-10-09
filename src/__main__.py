@@ -6,6 +6,7 @@ from .config import parse_config
 from .eventlog import EventLog
 from .shell import Shell
 from .startup import run_startup
+from .vfs import VFS
 
 
 def repl(shell):
@@ -30,7 +31,8 @@ def main(arguments=None):
     config = parse_config(arguments)
     print(config.debug())
     try:
-        shell = Shell(config.name, EventLog(config.log))
+        vfs = VFS.load(config.vfs) if config.vfs else VFS()
+        shell = Shell(config.name, EventLog(config.log), vfs)
         if config.startup and run_startup(config.startup, shell):
             return 0
         repl(shell)

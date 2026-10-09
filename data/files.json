@@ -1,0 +1,23 @@
+{
+  "entries": [
+    {
+      "path": "/",
+      "type": "dir",
+      "mode": "755"
+    },
+    {
+      "path": "/hello.txt",
+      "type": "file",
+      "mode": "644",
+      "encoding": "base64",
+      "data": "0J/RgNC40LLQtdGCIQo="
+    },
+    {
+      "path": "/binary.bin",
+      "type": "file",
+      "mode": "644",
+      "encoding": "base64",
+      "data": "AAH/gA=="
+    }
+  ]
+}

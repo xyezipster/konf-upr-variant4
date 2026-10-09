@@ -1,0 +1,57 @@
+{
+  "entries": [
+    {
+      "path": "/",
+      "type": "dir",
+      "mode": "755"
+    },
+    {
+      "path": "/docs",
+      "type": "dir",
+      "mode": "755"
+    },
+    {
+      "path": "/docs/readme.txt",
+      "type": "file",
+      "mode": "644",
+      "encoding": "base64",
+      "data": "0KPRh9C10LHQvdCw0Y8gVkZTCg=="
+    },
+    {
+      "path": "/hello.txt",
+      "type": "file",
+      "mode": "644",
+      "encoding": "base64",
+      "data": "SGVsbG8hCg=="
+    },
+    {
+      "path": "/.hidden",
+      "type": "file",
+      "mode": "644",
+      "encoding": "base64",
+      "data": "c2VjcmV0Cg=="
+    },
+    {
+      "path": "/home",
+      "type": "dir",
+      "mode": "755"
+    },
+    {
+      "path": "/home/student",
+      "type": "dir",
+      "mode": "755"
+    },
+    {
+      "path": "/home/student/docs",
+      "type": "dir",
+      "mode": "755"
+    },
+    {
+      "path": "/home/student/docs/note.txt",
+      "type": "file",
+      "mode": "644",
+      "encoding": "base64",
+      "data": "UHJhY3RpY2UgMQo="
+    }
+  ]
+}

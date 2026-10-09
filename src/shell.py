@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 from .eventlog import EventLog
 from .parser import parse_command
+from .vfs import VFS
 
 MAX_CD_ARGUMENTS = 1
 
@@ -20,11 +21,12 @@ class Result:
 class Shell:
     """Обрабатывать одну строку команды за вызов."""
 
-    def __init__(self, name="MyVFS", logger=None):
+    def __init__(self, name="MyVFS", logger=None, vfs=None):
         """Задать имя VFS для приглашения."""
         self.name = name
         self.logger = logger or EventLog()
         self.cwd = "/"
+        self.vfs = vfs or VFS()
 
     @property
     def prompt(self):
