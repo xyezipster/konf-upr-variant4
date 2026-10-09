@@ -5,7 +5,10 @@ import getpass
 import posixpath
 from datetime import date
 
+from .modes import apply_changes, parse_changes
+
 MAX_CD_ARGUMENTS = 1
+MIN_CHMOD_ARGUMENTS = 2
 MAX_CAL_ARGUMENTS = 2
 MIN_MONTH, MAX_MONTH = 1, 12
 MIN_YEAR, MAX_YEAR = 1, 9999
@@ -133,4 +136,35 @@ def du(shell, arguments):
     return "\n".join(lines)
 
 
-COMMANDS = {"ls": ls, "cd": cd, "whoami": whoami, "cal": cal, "du": du}
+
+def _chmod_arguments(arguments):
+    """Читать -R до режима, сохранив символьные режимы вроде -w."""
+    flags, values = set(), list(arguments)
+    while values and values[0] == "-R":
+        flags.add("R")
+        values.pop(0)
+    if values and values[0] == "--":
+        values.pop(0)
+    return flags, values
+
+def chmod(shell, arguments):
+    """chmod [-R] режим пути...: изменить права узлов только в памяти."""
+    flags, values = _chmod_arguments(arguments)
+    if len(values) < MIN_CHMOD_ARGUMENTS:
+        raise ValueError("chmod: ожидаются режим и хотя бы один путь")
+    changes = parse_changes(values[0])
+    paths = [shell.vfs.resolve(value, shell.cwd) for value in values[1:]]
+    targets = set(paths)
+    if "R" in flags:
+        for path in paths:
+            prefix = path.rstrip("/") + "/"
+            targets.update(key for key in shell.vfs.nodes
+                           if key.startswith(prefix))
+    for path in targets:
+        node = shell.vfs.nodes[path]
+        node.mode = apply_changes(node.mode, changes)
+    return ""
+
+
+COMMANDS = {"ls": ls, "cd": cd, "whoami": whoami, "cal": cal, "du": du,
+            "chmod": chmod}

@@ -25,6 +25,13 @@ class Config:
                 f"Стартовый скрипт: {self.startup or '(не задан)'}")
 
 
+
+def _same_file(first, second):
+    """Сравнить пути, включая символические и жёсткие ссылки."""
+    if first.resolve() == second.resolve():
+        return True
+    return first.exists() and second.exists() and first.samefile(second)
+
 def parse_config(arguments=None):
     """Прочитать необязательные пути из командной строки."""
     parser = argparse.ArgumentParser(description="Эмулятор, вариант 4")
@@ -33,7 +40,7 @@ def parse_config(arguments=None):
     parser.add_argument("--startup", type=Path, help="Скрипт UTF-8")
     values = parser.parse_args(arguments)
     paths = (values.vfs, values.log, values.startup)
-    if values.log and any(values.log.resolve() == path.resolve()
+    if values.log and any(_same_file(values.log, path)
                           for path in (values.vfs, values.startup) if path):
         parser.error("Лог не должен совпадать с VFS или скриптом")
     return Config(*paths)

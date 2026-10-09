@@ -31,7 +31,7 @@ def _decode_node(entry):
     if not isinstance(entry, dict):
         raise ValueError("Элемент VFS должен быть объектом")
     kind = entry.get("type")
-    if kind not in {"file", "dir"}:
+    if kind not in ("file", "dir"):
         raise ValueError("Тип узла должен быть file или dir")
     mode = parse_mode(entry.get("mode", "755" if kind == "dir" else "644"))
     if kind == "dir":

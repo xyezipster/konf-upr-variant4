@@ -35,6 +35,7 @@ class VFSTests(unittest.TestCase):
 
     def test_invalid_documents(self):
         cases = [[], {}, {"entries": []}, {"entries": [None]},
+                 {"entries": [{"path": "/", "type": []}]},
                  {"entries": [{"path": "/", "type": "file",
                                "encoding": "base64", "data": "!"}]}]
         with tempfile.TemporaryDirectory() as folder:

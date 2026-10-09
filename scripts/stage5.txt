@@ -1,0 +1,22 @@
+# Числовые и символьные права; изменения видны через ls -l.
+ls -l /hello.txt
+chmod 600 /hello.txt
+ls -l /hello.txt
+chmod u+x,g+r,o= /hello.txt
+ls -l /hello.txt
+chmod a=rx /docs
+ls -l /
+chmod -R 700 /home
+ls -l /home/student/docs
+chmod -w /hello.txt
+ls -l /hello.txt
+chmod g-w /hello.txt
+chmod 644 /hello.txt /docs/readme.txt
+ls -l /hello.txt /docs/readme.txt
+chmod -- 600 /hello.txt
+chmod 999 /hello.txt
+chmod u+z /hello.txt
+chmod 600 /missing
+chmod 600
+chmod -Z 600 /hello.txt
+exit

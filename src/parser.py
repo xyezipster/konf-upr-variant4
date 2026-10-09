@@ -1,5 +1,6 @@
 """Разбор команд с кавычками и переменными окружения."""
 
+from dataclasses import dataclass, field
 import os
 import re
 
@@ -16,41 +17,72 @@ def _expand(line, index, environ):
     return environ.get(name, ""), match.end()
 
 
+@dataclass
+class TokenState:
+    """Текущий токен и контекст кавычек при чтении строки."""
+
+    tokens: list = field(default_factory=list)
+    token: list = field(default_factory=list)
+    quote: str | None = None
+    started: bool = False
+
+    def append(self, value):
+        """Добавить часть слова, включая пустое значение переменной."""
+        self.token.append(value)
+        self.started = True
+
+    def flush(self):
+        """Завершить слово, если оно началось."""
+        if self.started:
+            self.tokens.append("".join(self.token))
+        self.token, self.started = [], False
+
+
+def _special(line, index, environ, state):
+    """Обработать экранирование, кавычки и раскрытие переменной."""
+    char = line[index]
+    if char == "\\" and state.quote != "'":
+        index += 1
+        if index == len(line):
+            raise ValueError("Незавершённое экранирование")
+        state.append(line[index])
+        return index + 1
+    if char in "\"'" and (state.quote is None or state.quote == char):
+        state.quote = None if state.quote else char
+        state.started = True
+        return index + 1
+    if char == "$" and state.quote != "'":
+        value, end = _expand(line, index, environ)
+        state.append(value)
+        return end
+    return None
+
+
+def _step(line, index, environ, state):
+    """Прочитать символ или остановиться на комментарии."""
+    end = _special(line, index, environ, state)
+    if end is not None:
+        return end
+    char = line[index]
+    if char == "#" and state.quote is None and not state.started:
+        return len(line)
+    if char.isspace() and state.quote is None:
+        state.flush()
+    else:
+        state.append(char)
+    return index + 1
+
+
 def _tokens(line, environ):
     """Разбить строку, сохранив смысл кавычек и экранирования."""
-    tokens, token, quote = [], [], None
-    index, started = 0, False
+    state = TokenState()
+    index = 0
     while index < len(line):
-        char = line[index]
-        if char == "\\" and quote != "'":
-            index += 1
-            if index == len(line):
-                raise ValueError("Незавершённое экранирование")
-            token.append(line[index])
-            started = True
-        elif char in "\"'" and (quote is None or quote == char):
-            quote = None if quote else char
-            started = True
-        elif char == "#" and quote is None and not started:
-            break
-        elif char.isspace() and quote is None:
-            if started:
-                tokens.append("".join(token))
-            token, started = [], False
-        elif char == "$" and quote != "'":
-            value, index = _expand(line, index, environ)
-            token.append(value)
-            started = True
-            continue
-        else:
-            token.append(char)
-            started = True
-        index += 1
-    if quote:
+        index = _step(line, index, environ, state)
+    if state.quote:
         raise ValueError("Незакрытая кавычка")
-    if started:
-        tokens.append("".join(token))
-    return tokens
+    state.flush()
+    return state.tokens
 
 
 def parse_command(line, environ=None):

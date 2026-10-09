@@ -29,6 +29,15 @@ class ConfigTests(unittest.TestCase):
         with patch("sys.stderr"), self.assertRaises(SystemExit):
             parse_config(["--vfs", "a.json", "--log", "./a.json"])
 
+    def test_log_cannot_overwrite_hardlinked_vfs(self):
+        with tempfile.TemporaryDirectory() as folder:
+            source, log = Path(folder)/"vfs.json", Path(folder)/"log.json"
+            source.write_text('{"entries": []}')
+            log.hardlink_to(source)
+            with patch("sys.stderr"), self.assertRaises(SystemExit):
+                parse_config(["--vfs", str(source), "--log", str(log)])
+            self.assertEqual(source.read_text(), '{"entries": []}')
+
 
 class StartupTests(unittest.TestCase):
     """Ошибки, комментарии, exit и сохранение событий."""
