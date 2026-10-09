@@ -108,8 +108,6 @@ VFS загружается из JSON в память. Без `--vfs` созда�
 python3 -B -m unittest discover -s tests -v
 ```
 
-38 тестов проверяют парсер, настройки, журнал, VFS и команды,
-включая неизменность исходного JSON после chmod.
 Для демонстрации основных команд замените стартовый скрипт
 в команде запуска на `scripts/stage4.txt`.
 
@@ -127,8 +125,6 @@ python3 -B -m unittest discover -s tests -v
 | `src/commands.py` | Реализация команд оболочки |
 | `src/modes.py` | `parse_changes` и `apply_changes` обрабатывают права chmod |
 
-Остальные функции описаны в docstring в исходном коде.
-
 ## Этапы
 
 | Ветка | Содержание |
@@ -138,5 +134,3 @@ python3 -B -m unittest discover -s tests -v
 | `stage-3` | JSON VFS в памяти |
 | `stage-4` | ls, cd, whoami, cal, du |
 | `stage-5` | chmod и итоговая версия |
-
-Каждая ветка включает предыдущие этапы. В `main` находится вся работа.
