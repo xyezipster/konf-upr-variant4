@@ -31,3 +31,27 @@ class ParserTests(unittest.TestCase):
         for line in ['ls "oops', "ls " + chr(92)]:
             with self.subTest(line=line), self.assertRaises(ValueError):
                 parse_command(line)
+
+    def test_adjacent_quoted_parts(self):
+        words = parse_command("ls ab\"cd\"'ef' \"\"''")
+        self.assertEqual(words, ["ls", "abcdef", ""])
+
+    def test_escaped_characters(self):
+        self.assertEqual(parse_command(r"cd my\ dir"), ["cd", "my dir"])
+        self.assertEqual(parse_command(r'ls "a\"b"'), ["ls", 'a"b'])
+        self.assertEqual(parse_command(r"ls 'a\b'"), ["ls", r"a\b"])
+
+    def test_hash_in_words_and_quotes(self):
+        words = parse_command(r'ls \#name "#quoted" a#b # comment')
+        self.assertEqual(words, ["ls", "#name", "#quoted", "a#b"])
+
+    def test_variable_boundaries(self):
+        environ = {"HOME": "/a b", "NAME_SUFFIX": "value", "EMPTY": ""}
+        words = parse_command('ls ${HOME}/docs $NAME_SUFFIX x${EMPTY}y',
+                              environ)
+        self.assertEqual(words, ["ls", "/a b/docs", "value", "xy"])
+
+    def test_empty_and_comment_lines(self):
+        for line in ["", "   ", "\t", " # comment", "\t# comment"]:
+            with self.subTest(line=line):
+                self.assertEqual(parse_command(line), [])
